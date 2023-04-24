@@ -19,6 +19,7 @@ import (
 	"github.com/tumberger/zk-compilers/gnark/circuits/toy/cubic"
 	"github.com/tumberger/zk-compilers/gnark/circuits/toy/expo"
 	"github.com/tumberger/zk-compilers/gnark/circuits/toy/exponentiate"
+	"github.com/tumberger/zk-compilers/gnark/circuits/toy/quartic"
 	"github.com/tumberger/zk-compilers/gnark/util"
 )
 
@@ -34,6 +35,7 @@ func init() {
 
 	// Toy Circuits
 	BenchCircuits["cubic"] = &defaultCircuit{}
+	BenchCircuits["quartic"] = &defaultCircuit{}
 	BenchCircuits["expo"] = &defaultCircuit{}
 	BenchCircuits["exponentiate"] = &defaultCircuit{}
 
@@ -177,6 +179,8 @@ func (d *defaultCircuit) Circuit(size int, name string, path string) frontend.Ci
 	switch name {
 	case "cubic":
 		return &cubic.CubicCircuit{}
+	case "quartic":
+		return &quartic.QuarticCircuit{}
 	case "expo":
 		return &expo.BenchCircuit{N: size}
 	case "exponentiate":
@@ -202,6 +206,16 @@ func (d *defaultCircuit) Witness(size int, curveID ecc.ID, name string, path str
 	switch name {
 	case "cubic":
 		witness := cubic.CubicCircuit{}
+		witness.X = (data["X"].(string))
+		witness.Y = (data["Y"].(string))
+
+		w, err := frontend.NewWitness(&witness, curveID.ScalarField())
+		if err != nil {
+			panic(err)
+		}
+		return w
+	case "quartic":
+		witness := quartic.QuarticCircuit{}
 		witness.X = (data["X"].(string))
 		witness.Y = (data["Y"].(string))
 
